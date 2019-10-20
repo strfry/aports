@@ -26,3 +26,30 @@ trigger:
     - pull_request
 
 
+---
+kind: pipeline
+name: edge-aarch64
+
+clone:
+  disable: true
+
+platform:
+  os: linux
+  arch: arm64
+
+steps:
+  - name: build
+    image: alpinelinux/alpine-drone-ci:edge-aarch64
+    commands:
+      - sudo sed -i 's,github.com/alpinelinux/aports,github.com/strfry/aports,g' /usr/local/bin/build.sh
+      - sh -x /usr/local/bin/build.sh
+    environment:
+      GH_TOKEN:
+        from_secret: github_token
+    pull: always
+
+trigger:
+  event:
+    - push
+
+
