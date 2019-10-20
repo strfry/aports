@@ -13,7 +13,7 @@ steps:
   - name: build
     image: alpinelinux/alpine-drone-ci:edge-x86
     commands:
-      - cat build.sh
+      - ls
     environment:
       GH_TOKEN:
         from_secret: github_token
