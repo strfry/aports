@@ -38,12 +38,6 @@ platform:
   arch: amd64
 
 steps:
-  - name: patch in qemu-static
-    image: docker:latest
-    volumes:
-    commands:
-    - ls  /
-    #- docker build -t alpine-aarch64:${DRONE_COMMIT} -f scripts/docker/Dockerfile.aarch64 .
     
   - name: build
     image: alpinelinux/alpine-drone-ci:edge-x86
