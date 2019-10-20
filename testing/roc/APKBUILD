@@ -1,7 +1,7 @@
 # Maintainer: strfry <aports@strfry.org>
 pkgname=roc
 pkgver=0.1.2
-pkgrel=0
+pkgrel=1
 pkgdesc="Real-time audio streaming over the network."
 url="https://roc-project.github.io"
 arch="all"
