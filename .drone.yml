@@ -13,8 +13,9 @@ steps:
   - name: build
     image: alpinelinux/alpine-drone-ci:edge-x86
     commands:
-      - echo $(which build.sh)
+      - sudo sed -i 's,github.com/alpinelinux/aports,github.com/strfry/aports,g' /usr/local/bin/build.sh
       - cat $(which build.sh)
+      - sh -x /usr/local/bin/build.sh
     environment:
       GH_TOKEN:
         from_secret: github_token
