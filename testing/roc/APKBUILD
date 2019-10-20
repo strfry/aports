@@ -1,0 +1,43 @@
+# Maintainer: strfry <aports@strfry.org>
+pkgname=roc
+pkgver=0.1.2
+pkgrel=0
+pkgdesc="Real-time audio streaming over the network."
+url="https://roc-project.github.io"
+arch="all"
+license="GPL"
+depends=""
+depends_dev="libuv-dev sox-dev pulseaudio-dev"
+makedepends="python pkgconf scons gengetopt cpputest cmake $depends_dev"
+#install=""
+#subpackages="$pkgname-dev $pkgname-sox $pkgname-pulse"
+subpackages="$pkgname-dev"
+source="$pkgname-$pkgver.tar.gz::https://github.com/roc-project/roc/archive/v0.1.2.tar.gz"
+builddir="$srcdir/$pkgname-$pkgver"
+
+_giturl="https://github.com/roc-project/roc"
+_gittag="origin/master"
+
+_scons_opts="--disable-openfec"
+
+prepare() {
+        default_prepare
+}
+
+build() {
+	cd "$builddir"
+	scons $_scons_opts
+}
+
+check() {
+	cd "$builddir"
+#        scons $_scons_opts test
+}
+
+package() {
+	cd "$builddir"
+	scons $_scons_opts --prefix="$pkgdir/usr" install
+}
+
+
+sha512sums="4e4e1aad3b4682a0d7d259fd7255cac0535747668bf2d82ff6439eede53773c6f7cce736d40c8df3d14629e8dca713ea592ab19e37d627d2027d7f3383da3e3d  roc-0.1.2.tar.gz"
