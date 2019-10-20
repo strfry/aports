@@ -41,13 +41,18 @@ steps:
   - name: patch in qemu-static
     image: docker:latest
     volumes:
-      - name: docker_sock
-        path: /var/run/docker.sock
     commands:
-    - docker build -t runner-aarch64:${DRONE_COMMIT} -f scripts/docker/Dockerfile.aarch64
+    - ls  /
+    #- docker build -t alpine-aarch64:${DRONE_COMMIT} -f scripts/docker/Dockerfile.aarch64 .
     
   - name: build
-    image: alpinelinux/alpine-drone-ci:edge-aarch64:${DRONE_COMMIT}
+    image: alpinelinux/alpine-drone-ci:edge-x86
+    volumes:
+      - name: docker_sock
+        path: /var/run/docker.sock
+      - name: /usr/bin/qemu-aarch64
+        path: /usr/bin/qemu-aarch64-static
+    pull: never 
     commands:
       - sudo sed -i 's,github.com/alpinelinux/aports,github.com/strfry/aports,g' /usr/local/bin/build.sh
       - sh -x /usr/local/bin/build.sh
@@ -58,6 +63,6 @@ steps:
 
 trigger:
   event:
-    - push
+    - pull_request
 
 
