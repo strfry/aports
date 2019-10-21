@@ -42,35 +42,35 @@ trigger:
     - pull_request
 
 
----
-kind: pipeline
-name: edge-aarch64
+#---
+#kind: pipeline
+#name: edge-aarch64
 
-clone:
-  disable: true
+#clone:
+  #disable: true
 
-platform:
-  os: linux
-  arch: amd64
+#platform:
+  #os: linux
+  #arch: amd64
 
-steps:
+#steps:
     
-  - name: build
-    image: alpinelinux/alpine-drone-ci:edge-x86_64
-    volumes:
-      - name: docker_sock
-        path: /var/run/docker.sock
-      - name: /usr/bin/qemu-aarch64
-        path: /usr/bin/qemu-aarch64-static
-    pull: never 
-    commands:
-      - sudo sed -i 's,github.com/alpinelinux/aports,github.com/strfry/aports,g' /usr/local/bin/build.sh
-      - sh -x /usr/local/bin/build.sh
-    environment:
-      GH_TOKEN:
-        from_secret: github_token
-    pull: always
+  #- name: build
+    #image: alpinelinux/alpine-drone-ci:edge-x86_64
+    #volumes:
+      #- name: docker_sock
+        #path: /var/run/docker.sock
+      #- name: /usr/bin/qemu-aarch64
+        #path: /usr/bin/qemu-aarch64-static
+    #pull: never 
+    #commands:
+      #- sudo sed -i 's,github.com/alpinelinux/aports,github.com/strfry/aports,g' /usr/local/bin/build.sh
+      #- sh -x /usr/local/bin/build.sh
+    #environment:
+      #GH_TOKEN:
+        #from_secret: github_token
+    #pull: always
 
-trigger:
-  event:
-    - pull_request
+#trigger:
+  #event:
+    #- pull_request
