@@ -3,16 +3,23 @@ kind: pipeline
 name: edge-x86_64
 type: docker
 
-clone:
-  disable: true
+#clone:
+#  disable: true
 
 platform:
   os: linux
   arch: amd64
 
 steps:
+  - name: image
+    image: docker:latest
+    volumes:
+      - name: /var/run/docker.sock
+        path: /var/run/docker.sock
+    commands:
+      - docker build -t strfry/alpine-drone-ci:$DRONE_COMMIT dockerfiles/edge/x86_64
   - name: build
-    image: strfry/alpine-drone-ci:edge-x86_64
+    image: strfry/alpine-drone-ci:$DRONE_COMMIT
     pull: never
     volumes:
       - name: /var/cache/apk
