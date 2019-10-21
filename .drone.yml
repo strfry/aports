@@ -12,7 +12,11 @@ platform:
 steps:
   - name: build
     image: alpinelinux/alpine-drone-ci:edge-x86
+    volumes:
+      - name: /var/cache/apk
+        path: /var/cache/apk
     commands:
+      - ln -s /var/cache/apk /etc/apk/cache
       - sudo sed -i 's,github.com/alpinelinux/aports,github.com/strfry/aports,g' /usr/local/bin/build.sh
       - cat $(which build.sh)
       - sh -x /usr/local/bin/build.sh
