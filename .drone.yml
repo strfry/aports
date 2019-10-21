@@ -61,5 +61,3 @@ steps:
 trigger:
   event:
     - pull_request
-
-
