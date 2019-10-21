@@ -1,6 +1,7 @@
 ---
 kind: pipeline
-name: edge-x86
+name: edge-x86_64
+type: docker
 
 clone:
   disable: true
@@ -11,7 +12,8 @@ platform:
 
 steps:
   - name: build
-    image: alpinelinux/alpine-drone-ci:edge-x86
+    image: strfry/alpine-drone-ci:edge-x86_64
+    pull: never
     volumes:
       - name: /var/cache/apk
         path: /var/cache/apk
@@ -47,7 +49,7 @@ platform:
 steps:
     
   - name: build
-    image: alpinelinux/alpine-drone-ci:edge-x86
+    image: alpinelinux/alpine-drone-ci:edge-x86_64
     volumes:
       - name: docker_sock
         path: /var/run/docker.sock
