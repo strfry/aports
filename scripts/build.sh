@@ -10,7 +10,8 @@ readonly REPOURL=https://github.com/alpinelinux/aports
 readonly ARCH=$(apk --print-arch)
 
 # Drone variables
-readonly BRANCH=$DRONE_COMMIT_BRANCH
+#readonly BRANCH=$DRONE_COMMIT_BRANCH
+readonly BRANCH=master
 #readonly PR=$DRONE_PULL_REQUEST
 
 msg() {
