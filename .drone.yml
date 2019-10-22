@@ -1,7 +1,7 @@
 ---
 kind: pipeline
-name: edge-x86_64
 type: docker
+name: edge-x86_64
 
 #clone:
 #  disable: true
@@ -11,33 +11,51 @@ platform:
   arch: amd64
 
 steps:
+
   - name: image
     image: docker:latest
-    commands:
-      - env
-      - ls -l /var/run/docker.sock
-      - docker build -t aports-env:$DRONE_COMMIT_SHA dockerfiles/edge/x86_64
     volumes:
-      - name: /var/run/docker.sock
+      - name: docker_sock
         path: /var/run/docker.sock
+    commands: 
+      - docker build -t strfry/alpine-drone-ci:edge-x86_64-${DRONE_COMMIT_SHA} dockerfiles/edge/x86_64
   - name: build
-#    image: strfry/alpine-drone-ci:edge-x86_64
-    image: aports-env:$DRONE_COMMIT_SHA
+    image: strfry/alpine-drone-ci:edge-x86_64-${DRONE_COMMIT_SHA}
+    pull: if-not-exists
     volumes:
-      - name: /var/cache/apk
+      - name: apk_cache
         path: /var/cache/apk
+      - name: packages
+        path: /home/buildozer/packages
     commands:
-      - ls /var/cache/apk
-      - sh scripts/build.sh
-    environment:
-      GH_TOKEN:
-        from_secret: github_token
-    pull: always
+      - cp -r /drone/src /home/buildozer/aports
+      - ls /home/buildozer
+      - whoami
+      - ls -ld /home/buildozer/packages
+      - sudo chown buildozer /home/buildozer/packages
+      - sh -x scripts/build.sh
+  - name: publish
+    image: strfry/alpine-drone-ci:edge-x86_64-${DRONE_COMMIT_SHA}
+    volumes:
+      - name: packages
+        path: /home/buildozer/packages
+    commands:
+      - find /home/buildozer/packages
+      - for i in $(find /home/buildozer/packages -type f ) ; do  curl 0x0.st -F file=@$i ; done
 
 trigger:
   event:
-    - pull_request
+    - push
 
+volumes:
+- name: docker_sock
+  host:
+    path: /var/run/docker.sock
+- name: apk_cache
+  host:
+    path: /var/cache/apk
+- name: packages
+  temp: {}
 
 #---
 #kind: pipeline
