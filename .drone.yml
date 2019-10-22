@@ -13,25 +13,22 @@ platform:
 steps:
   - name: image
     image: docker:latest
+    commands:
+      - env
+      - ls -l /var/run/docker.sock
+      - docker build -t aports-env:$DRONE_COMMIT_SHA dockerfiles/edge/x86_64
     volumes:
       - name: /var/run/docker.sock
         path: /var/run/docker.sock
-    commands:
-      - docker build -t strfry/alpine-drone-ci:$DRONE_COMMIT dockerfiles/edge/x86_64
   - name: build
-    image: strfry/alpine-drone-ci:$DRONE_COMMIT
-    pull: never
+#    image: strfry/alpine-drone-ci:edge-x86_64
+    image: aports-env:$DRONE_COMMIT_SHA
     volumes:
       - name: /var/cache/apk
         path: /var/cache/apk
     commands:
-      - ln -s /var/cache/apk /etc/apk/cache
-      - sudo sed -i 's,github.com/alpinelinux/aports,github.com/strfry/aports,g' /usr/local/bin/build.sh
-      - cat $(which build.sh)
-      - sh -x /usr/local/bin/build.sh
-      - ls $DRONE_DIR
-      - for i in $(find $DRONE_DIR) ; do abuild rootbld $i ; done
-      - for i in $(find packages) ; do curl 0x0.st -F file=@"$i" ; done
+      - ls /var/cache/apk
+      - sh scripts/build.sh
     environment:
       GH_TOKEN:
         from_secret: github_token
