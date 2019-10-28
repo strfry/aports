@@ -90,7 +90,11 @@ changed_aports() {
 setup_system() {
 	sudo sh -c "echo $MIRROR/$(get_release)/main > /etc/apk/repositories"
 #	sudo apk -U upgrade -a || apk fix || die "Failed to up/downgrade system"
-	abuild-keygen -ain
+
+	echo $APK_KEY > ~/.abuild/${PACKAGER}.rsa
+	sudo openssl rsa -in ~/.abuild/${PACKAGER}.rsa -pubout -out /etc/apk/keys/${PACKAGER}.rsa.pub
+	echo "PACKAGER_PRIVKEY=${HOME}/.abuild/${PACKAGER}.rsa" >> ~/.abuild/abuild.conf
+
 	sudo sed -i 's/JOBS=[0-9]*/JOBS=$(nproc)/' /etc/abuild.conf
 	mkdir -p "$REPODEST"
 }
