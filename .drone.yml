@@ -40,6 +40,7 @@ steps:
       - name: packages
         path: /home/buildozer/packages
     commands:
+      - apk add openssh-client rsync
       - eval ´ssh-agent´
       - echo "$SSH_KEY" | ssh-add
       - rsync -r /home/buildozer/packages root@upload-alpine.strfry.org:/var/www/alpine
