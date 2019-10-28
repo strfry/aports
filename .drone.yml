@@ -19,30 +19,31 @@ steps:
         path: /var/run/docker.sock
     commands: 
       - docker build -t strfry/alpine-drone-ci:edge-x86_64-${DRONE_COMMIT_SHA} dockerfiles/edge/x86_64
-  - name: build
-    image: strfry/alpine-drone-ci:edge-x86_64-${DRONE_COMMIT_SHA}
-    pull: if-not-exists
-    volumes:
-      - name: apk_cache
-        path: /var/cache/apk
-      - name: packages
-        path: /home/buildozer/packages
-    commands:
-      - cp -r /drone/src /home/buildozer/aports
-      - ls /home/buildozer
-      - whoami
-      - ls -ld /home/buildozer/packages
-      - sudo chown buildozer /home/buildozer/packages
-      - sh -x scripts/build.sh
+  #- name: build
+    #image: strfry/alpine-drone-ci:edge-x86_64-${DRONE_COMMIT_SHA}
+    #pull: if-not-exists
+    #volumes:
+      #- name: apk_cache
+        #path: /var/cache/apk
+      #- name: packages
+        #path: /home/buildozer/packages
+    #commands:
+      #- cp -r /drone/src /home/buildozer/aports
+      #- ls /home/buildozer
+      #- whoami
+      #- ls -ld /home/buildozer/packages
+      #- sudo chown buildozer /home/buildozer/packages
+      #- sh -x scripts/build.sh
   - name: publish
     image: strfry/alpine-drone-ci:edge-x86_64-${DRONE_COMMIT_SHA}
     volumes:
       - name: packages
         path: /home/buildozer/packages
+    network_mode: bridge
     commands:
       - sudo apk add openssh-client rsync
-      - mkdir ~/.ssh && echo -en "$SSH_KEY" > ~/.ssh/id_ed25519
-      - rsync -e "ssh -o StrictHostKeyChecking=no" -r /home/buildozer/packages root@upload-alpine.strfry.org:/var/www/alpine
+      - mkdir ~/.ssh && echo -en "$SSH_KEY" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
+      - rsync -e "ssh -o StrictHostKeyChecking=no" -r /home/buildozer/packages upload@upload-alpine.strfry.org:/var/www/alpine
     environment:
       SSH_KEY:
         from_secret: ssh_upload_key
