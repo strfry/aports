@@ -19,21 +19,21 @@ steps:
         path: /var/run/docker.sock
     commands: 
       - docker build -t strfry/alpine-drone-ci:edge-x86_64-${DRONE_COMMIT_SHA} dockerfiles/edge/x86_64
-  #- name: build
-    #image: strfry/alpine-drone-ci:edge-x86_64-${DRONE_COMMIT_SHA}
-    #pull: if-not-exists
-    #volumes:
-      #- name: apk_cache
-        #path: /var/cache/apk
-      #- name: packages
-        #path: /home/buildozer/packages
-    #commands:
-      #- cp -r /drone/src /home/buildozer/aports
-      #- ls /home/buildozer
-      #- whoami
-      #- ls -ld /home/buildozer/packages
-      #- sudo chown buildozer /home/buildozer/packages
-      #- sh -x scripts/build.sh
+  - name: build
+    image: strfry/alpine-drone-ci:edge-x86_64-${DRONE_COMMIT_SHA}
+    pull: if-not-exists
+    volumes:
+      - name: apk_cache
+        path: /var/cache/apk
+      - name: packages
+        path: /home/buildozer/packages
+    commands:
+      - cp -r /drone/src /home/buildozer/aports
+      - ls /home/buildozer
+      - whoami
+      - ls -ld /home/buildozer/packages
+      - sudo chown buildozer /home/buildozer/packages
+      - sh -x scripts/build.sh
   - name: publish
     image: strfry/alpine-drone-ci:edge-x86_64-${DRONE_COMMIT_SHA}
     volumes:
@@ -59,7 +59,7 @@ volumes:
   host:
     path: /var/cache/apk
 - name: packages
-  temp: {}
+  path: /var/www/alpine
 
 #---
 #kind: pipeline
