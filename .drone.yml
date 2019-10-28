@@ -21,14 +21,13 @@ steps:
       - name: apk_cache
         path: /var/cache/apk
       - name: packages
-        path: /home/buildozer/packages
+        path: /var/www/packages
     environment:
       APK_KEY:
         from_secret: apk_build_key
       PACKAGER: alpine-infra@strfry.org
     commands:
       - cp -r /drone/src /home/buildozer/aports
-      - sudo chown buildozer /home/buildozer/packages
       - sh -x scripts/build.sh
   - name: publish
     image: alpinelinux:latest
