@@ -41,8 +41,7 @@ steps:
         path: /home/buildozer/packages
     commands:
       - sudo apk add openssh-client rsync
-      - eval $(ssh-agent -s)
-      - echo "$SSH_KEY" | ssh-add
+      - mkdir ~/.ssh && echo -en "$SSH_KEY" > ~/.ssh/id_ed25519
       - rsync -r /home/buildozer/packages root@upload-alpine.strfry.org:/var/www/alpine
     environment:
       SSH_KEY:
