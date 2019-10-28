@@ -59,7 +59,8 @@ volumes:
   host:
     path: /var/cache/apk
 - name: packages
-  path: /var/www/alpine
+  host:
+    path: /var/www/alpine
 
 #---
 #kind: pipeline
