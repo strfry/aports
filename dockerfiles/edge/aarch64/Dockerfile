@@ -4,7 +4,6 @@ FROM alpinelinux/alpine-drone-ci:edge-aarch64
 
 #RUN apk add qemu-aarch64
 
-# cp /usr/bin/qemu-aarch64 .
-ADD qemu-aarch64 /usr/bin/qemu-aarch64-static
-
 #FROM multiarch/qemu-user-static
+# COPY /usr/bin/qemu-aarch64 /usr/bin/qemu-aarch64-static
+

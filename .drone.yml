@@ -1,62 +1,61 @@
 ---
 kind: pipeline
-name: edge-x86
-
-clone:
-  disable: true
+type: docker
+name: edge-x86_64
 
 platform:
   os: linux
   arch: amd64
 
 steps:
-  - name: build
-    image: alpinelinux/alpine-drone-ci:edge-x86
-    commands:
-      - sudo sed -i 's,github.com/alpinelinux/aports,github.com/strfry/aports,g' /usr/local/bin/build.sh
-      - cat $(which build.sh)
-      - sh -x /usr/local/bin/build.sh
-    environment:
-      GH_TOKEN:
-        from_secret: github_token
-    pull: always
-
-trigger:
-  event:
-    - pull_request
-
-
----
-kind: pipeline
-name: edge-aarch64
-
-clone:
-  disable: true
-
-platform:
-  os: linux
-  arch: amd64
-
-steps:
-    
-  - name: build
-    image: alpinelinux/alpine-drone-ci:edge-x86
+  - name: image
+    image: docker:latest
     volumes:
       - name: docker_sock
         path: /var/run/docker.sock
-      - name: /usr/bin/qemu-aarch64
-        path: /usr/bin/qemu-aarch64-static
-    pull: never 
-    commands:
-      - sudo sed -i 's,github.com/alpinelinux/aports,github.com/strfry/aports,g' /usr/local/bin/build.sh
-      - sh -x /usr/local/bin/build.sh
+    commands: 
+      - docker build -t strfry/alpine-drone-ci:edge-x86_64-${DRONE_COMMIT_SHA} dockerfiles/edge/x86_64
+  - name: build
+    image: strfry/alpine-drone-ci:edge-x86_64-${DRONE_COMMIT_SHA}
+    volumes:
+      - name: apk_cache
+        path: /var/cache/apk
+      - name: packages
+        path: /var/www/packages
     environment:
-      GH_TOKEN:
-        from_secret: github_token
-    pull: always
-
+      APK_KEY:
+        from_secret: apk_build_key
+      PACKAGER: alpine-infra@strfry.org
+    commands:
+      - cp -r /drone/src /home/buildozer/aports
+      - sh -x scripts/build.sh
+  - name: publish
+    image: alpinelinux:latest
+    volumes:
+      - name: packages
+        path: /home/buildozer/packages
+    network_mode: bridge
+    commands:
+      - sudo apk add openssh-client rsync
+      - mkdir ~/.ssh && echo -en "$SSH_KEY" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
+      - rsync -e "ssh -o StrictHostKeyChecking=no" -r /home/buildozer/packages upload@upload-alpine.strfry.org:/var/www/alpine
+    environment:
+      SSH_KEY:
+        from_secret: ssh_upload_key
+    when:
+      branch:
+      - master
 trigger:
   event:
-    - pull_request
+    - push
 
-
+volumes:
+- name: docker_sock
+  host:
+    path: /var/run/docker.sock
+- name: apk_cache
+  host:
+    path: /var/cache/apk
+- name: packages
+  host:
+    path: /var/www/alpine
