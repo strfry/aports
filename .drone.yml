@@ -32,13 +32,13 @@ steps:
   - name: publish
     image: alpine:latest
     volumes:
-      - name: packages
+      - name: package_repo
         path: /var/www/alpine
     network_mode: bridge
     commands:
       - apk add openssh-client rsync
       - mkdir ~/.ssh && echo -en "$SSH_KEY" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
-      - rsync -e "ssh -o StrictHostKeyChecking=no" -r /var/www/alpine/packages upload@upload-alpine.strfry.org:/var/www/alpine
+      - rsync -r -e "ssh -o StrictHostKeyChecking=no" /var/www/alpine/packages upload@upload-alpine.strfry.org:/var/www/alpine
     environment:
       SSH_KEY:
         from_secret: ssh_upload_key

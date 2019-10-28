@@ -108,7 +108,6 @@ setup_system() {
 
 create_workspace() {
 	ln -s /drone/src $APORTSDIR
-	ls $APORTSDIR
 #	cp -r /drone/src APORTSDIR
 #	msg "Cloning aports and applying PR$PR"
 #	git clone --depth=1 --branch "$BRANCH" "$REPOURL" "$APORTSDIR"
