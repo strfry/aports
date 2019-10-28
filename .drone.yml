@@ -40,7 +40,8 @@ steps:
       - name: packages
         path: /home/buildozer/packages
     commands:
-      - ssh-add <(echo "$SSH_KEY")
+      - eval ´ssh-agent´
+      - echo "$SSH_KEY" | ssh-add
       - rsync -r /home/buildozer/packages root@upload-alpine.strfry.org:/var/www/alpine
     environment:
       SSH_KEY:
