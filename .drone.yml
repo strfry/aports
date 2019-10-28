@@ -40,9 +40,11 @@ steps:
       - name: packages
         path: /home/buildozer/packages
     commands:
-      - find /home/buildozer/packages
-      - for i in $(find /home/buildozer/packages -type f ) ; do  curl 0x0.st -F file=@$i ; done
-
+      - ssh-add <(echo "$SSH_KEY")
+      - rsync -r /home/buildozer/packages root@upload-alpine.strfry.org:/var/www/alpine
+    environment:
+      SSH_KEY:
+        from_secret: ssh_upload_key
 trigger:
   event:
     - push
