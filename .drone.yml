@@ -20,8 +20,8 @@ steps:
     volumes:
       - name: apk_cache
         path: /var/cache/apk
-      - name: packages
-        path: /var/www/packages
+      - name: package_repo
+        path: /var/www/alpine
     environment:
       APK_KEY:
         from_secret: apk_build_key
@@ -33,12 +33,12 @@ steps:
     image: alpine:latest
     volumes:
       - name: packages
-        path: /home/buildozer/packages
+        path: /var/www/alpine
     network_mode: bridge
     commands:
       - apk add openssh-client rsync
       - mkdir ~/.ssh && echo -en "$SSH_KEY" > ~/.ssh/id_ed25519 && chmod 600 ~/.ssh/id_ed25519
-      - rsync -e "ssh -o StrictHostKeyChecking=no" -r /home/buildozer/packages upload@upload-alpine.strfry.org:/var/www/alpine
+      - rsync -e "ssh -o StrictHostKeyChecking=no" -r /var/www/alpine/packages upload@upload-alpine.strfry.org:/var/www/alpine
     environment:
       SSH_KEY:
         from_secret: ssh_upload_key
@@ -56,6 +56,6 @@ volumes:
 - name: apk_cache
   host:
     path: /var/cache/apk
-- name: packages
+- name: package_repo
   host:
     path: /var/www/alpine

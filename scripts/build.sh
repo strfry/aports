@@ -96,7 +96,7 @@ setup_system() {
 		(set +x ; echo "$APK_KEY" > ~/.abuild/${PACKAGER}.rsa )
 		sudo openssl rsa -in ~/.abuild/${PACKAGER}.rsa -pubout -out /etc/apk/keys/${PACKAGER}.rsa.pub
 		echo "PACKAGER_PRIVKEY=${HOME}/.abuild/${PACKAGER}.rsa" >> ~/.abuild/abuild.conf
-		echo "REPODEST=/var/www/alpine" >> ~/.abuild/abuild.conf/var/www/packages
+		echo "REPODEST=/var/www/alpine" >> ~/.abuild/abuild.conf
 	else
 		# otherwise, generate ephemeral key
 		abuild-keygen -ain
